@@ -10,9 +10,10 @@ if (isset($_GET["update"])) {
     $day = $_POST["day"];
     $shift = $_POST["shift"];
     $classroom = $_POST["classroom"];
+    $numStudent = (int)$_POST["student"];
     $teacherCode = $_POST["teacherCode"];
 
-    $schedule->updateSchedule($classID, $day, $shift, $classroom, $teacherCode);
+    $schedule->updateSchedule($classID, $day, $shift, $classroom, $numStudent, $teacherCode);
 } else if (isset($_GET["subjectList"])) {
     if (isset($_POST)) {
         $semesterID = (int)$_POST["semesterID"];

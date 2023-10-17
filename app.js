@@ -16,6 +16,7 @@ const apiEndpoints = {
     saveToDatabase: "/controller/enroll.php?save",
     loadScheduleFromDatabase: "/controller/enroll.php?getSchedule",
     removeFromDatabase: "/controller/enroll.php?delSchedule",
+    checkLimit: "/controller/enroll.php?checkLimit",
 };
 
 let semesterid = 1;
@@ -190,26 +191,36 @@ async function checkSubject(subID) {
     return storageData.some((element) => element.SubID == subID);
 }
 
+async function checkLimit(classroom) {
+    console.log(classroom);
+    try {
+        const data = await $.post(apiEndpoints.checkLimit, {
+            classroom,
+        });
+        const parsedData = JSON.parse(data.trim());
+        return parsedData.full;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 async function checkSchedule(subID, mainClass, pracClass) {
     const mainClassDay = mainClass.Day;
     const mainClassShift = mainClass.Shift;
 
-    let flag = false;
-
     storageData.forEach((element) => {
         if (element.SubID != subID) {
-            if (checkShift(subID, mainClassDay, mainClassShift)) {
-                flag = true;
-            }
+            if (!checkShift(subID, mainClassDay, mainClassShift)) return false;
+
             if (pracClass) {
                 const pracClassDay = pracClass.Day;
                 const pracClassShift = pracClass.Shift;
-                if (checkShift(subID, pracClassDay, pracClassShift))
-                    flag = true;
+                if (!checkShift(subID, pracClassDay, pracClassShift))
+                    return false;
             }
         }
     });
-    return flag;
+    return false;
 }
 
 function addSubjectToStorage() {
@@ -244,14 +255,22 @@ function addSubjectToStorage() {
         }
         //check shift
         let flag = true;
+        let message = "";
         const flagMainClass = await checkShift(
             subID,
             mainClassDay,
             mainClassShift
         );
-        if (!flagMainClass) {
+
+        const flagLimitMain = await checkLimit(mainClassName);
+        console.log("full", flagLimitMain);
+        if (!flagMainClass || flagLimitMain) {
             this.checked = false;
             flag = false;
+
+            message = !flagMainClass
+                ? "Trùng lịch với môn học đã đăng ký"
+                : "Lớp đầy";
         }
 
         const mainClass = {
@@ -274,9 +293,14 @@ function addSubjectToStorage() {
                 pracClassDay,
                 pracClassShift
             );
-            if (!flagPracClass) {
+
+            const flagLimitPrac = await checkLimit(pracClass);
+            if (!flagPracClass || flagLimitPrac) {
                 this.checked = false;
                 flag = false;
+                message = !flagPracClass
+                    ? "Trùng lịch với môn học đã đăng ký"
+                    : "Lớp đầy";
             }
 
             pracClass = {
@@ -310,7 +334,7 @@ function addSubjectToStorage() {
         }
 
         if (!flag) {
-            alert("Trùng lịch với môn học đã đăng ký.");
+            alert(message);
             console.log("Trung lich!");
             return;
         }

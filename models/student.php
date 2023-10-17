@@ -10,8 +10,9 @@ class Student extends DB
     public function getInfo($studentCode)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("SELECT S.*, C.classroom_code, C.consultant as consultant_code, T.teacher_name as consultant_name FROM `student` S JOIN classroom C ON S.classroom_code = C.classroom_code JOIN teacher T ON C.consultant = T.teacher_code WHERE `student_code` = ?");
+        $query = $stmt->prepare("SELECT S.*, C.classroom_code, C.consultant as consultant_code, T.teacher_name as consultant_name FROM `student` S LEFT JOIN classroom C ON S.classroom_code = C.classroom_code LEFT JOIN teacher T ON C.consultant = T.teacher_code WHERE S.student_code = ?");
         $query->execute([$studentCode]);
+        // $query->debugDumpParams();
 
         return $query->fetch();
     }

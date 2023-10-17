@@ -121,22 +121,28 @@ if (!isset($_SESSION["account"])) {
                                 <p class="text-uppercase text-sm">Cập nhật thông tin lớp <?= $getInfoClass["class_name"] ?></p>
                                 <div id="message"></div>
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Thứ</label>
                                             <input class="form-control" type="text" value="<?= $getInfoClass["day"] ?>" id="day">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Giờ học</label>
                                             <input class="form-control" type="text" value="<?= $getInfoClass["shift"] ?>" id="shift">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Phòng học</label>
                                             <input class="form-control" type="text" value="<?= $getInfoClass["classroom"] ?>" id="classroom">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Số lượng sinh viên</label>
+                                            <input class="form-control" type="text" value="<?= $getInfoClass["num_student"] ?>" id="numStudent">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -145,7 +151,6 @@ if (!isset($_SESSION["account"])) {
                                             <input type="text" hidden value="<?= $getInfoClass["teacher_code"] ?>" id="teacherCode">
                                             <input class="form-control" type="text" name="teacher" id="teacher" value="<?= $getInfoClass["teacher_name"]; ?>">
                                             <div id="suggestions"></div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -158,6 +163,7 @@ if (!isset($_SESSION["account"])) {
                                 var day = document.getElementById("day");
                                 var shift = document.getElementById("shift");
                                 var classroom = document.getElementById("classroom");
+                                var numStudent = document.getElementById("numStudent");
                                 var teacherList = [];
                                 var teacherInput = document.getElementById("teacher");
                                 var teacherCode = document.getElementById("teacherCode");
@@ -213,6 +219,7 @@ if (!isset($_SESSION["account"])) {
                                     const dayValue = day.value;
                                     const shiftValue = shift.value;
                                     const classroomValue = classroom.value;
+                                    const numStudentValue = numStudent.value;
                                     const teacherCodeValue = teacherCode.value;
 
                                     if (dayValue && shiftValue && classroomValue) {
@@ -221,6 +228,7 @@ if (!isset($_SESSION["account"])) {
                                             day: dayValue,
                                             shift: shiftValue,
                                             classroom: classroomValue,
+                                            numStudent: numStudentValue,
                                             teacherCode: teacherCodeValue,
                                         }, function(res) {
                                             console.log(res);

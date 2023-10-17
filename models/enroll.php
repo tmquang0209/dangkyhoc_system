@@ -127,4 +127,13 @@ GROUP BY class_name");
         $query = $stmt->prepare("DELETE FROM enroll WHERE student_code = ? AND schedule_id = ?");
         $query->execute([$studentCode, $scheduleID]);
     }
+
+    public function countStudent($className)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("SELECT COUNT(E.id) as count_student FROM enroll E JOIN schedule S ON E.schedule_id = S.id WHERE class_name = ? GROUP BY class_name");
+        $query->execute([$className]);
+
+        return $query->fetch()["count_student"];
+    }
 }

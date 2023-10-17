@@ -167,39 +167,49 @@ if (!isset($_SESSION["account"])) {
                             <h6>Đăng ký học phần</h6>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
-                                <?php
-                                include_once __DIR__ . "/../models/semester.php";
-                                $semester = new Semester();
-                                $semesterInfo = $semester->getSemesterList();
-                                ?>
-                                <div class="form-group" style="margin-left:10px">
-                                    <label for="example-text-input" class="form-control-label">Học kỳ</label>
-                                    <select name="" class="form-control" id="semester">
-                                        <option value="">Chọn học kỳ</option>
-                                        <?php
-                                        foreach ($semesterInfo as $row) {
-                                            echo '<option value="' . $row["semester_id"] . '">' . $row["semester_name"] . " năm học " . $row["year"] . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                            <?php if (!isset($_GET["semester_id"])) { ?>
+                                <div class="col-md-4">
+                                    <?php
+                                    include_once __DIR__ . "/../models/semester.php";
+                                    $semester = new Semester();
+                                    $semesterInfo = $semester->getSemesterList();
+                                    ?>
+                                    <div class="form-group" style="margin-left:10px">
+                                        <label for="example-text-input" class="form-control-label">Học kỳ</label>
+                                        <select name="" class="form-control" id="semester">
+                                            <option value="">Chọn học kỳ</option>
+                                            <?php
+                                            foreach ($semesterInfo as $row) {
+                                                echo '<option value="' . $row["semester_id"] . '">' . $row["semester_name"] . " năm học " . $row["year"] . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
+                                <script>
+                                    const semester = document.getElementById("semester");
+                                    semester.addEventListener("change", function() {
+                                        window.location.href = `?semester_id=${semester.value}`
+                                    })
+                                </script>
+                            <?php } ?>
                             <div class="col-md-4">
-                                <div class="form-group" style="margin-top:25px">
+                                <div class="form-group" style="margin-left:10px;margin-top:25px">
                                     <label for="example-text-input" class="form-control-label">Tìm kiếm môn học</label>
                                     <input name="" class="form-control" id="subName" onkeyup="searchSubject()">
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" id="studentCode">
-                        <div class="subject-box" id="subject-box"></div>
+                        <?php if (isset($_GET["semester_id"])) { ?>
+                            <div class="subject-box" id="subject-box"></div>
+                        <?php } ?>
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="col-12">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th style="max-width:5px">Ca</th>
+                                            <th style="max-width:10px">Ca</th>
                                             <th>Thứ 2</th>
                                             <th>Thứ 3</th>
                                             <th>Thứ 4</th>
@@ -213,7 +223,7 @@ if (!isset($_SESSION["account"])) {
                                         <?php
                                         for ($i = 1; $i <= 13; $i++) {
                                             echo '<tr>
-                                                    <td id="shift" data-item="' . $i . '" style="max-width:5px">' . $i . '</td>
+                                                    <td id="shift" data-item="' . $i . '" style="max-width:10px">' . $i . '</td>
                                                     <td id="mon_' . $i . '"></td>
                                                     <td id="tue_' . $i . '"></td>
                                                     <td id="wed_' . $i . '"></td>

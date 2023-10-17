@@ -69,4 +69,22 @@ if (isset($_GET["save"])) {
     foreach ($dataDel["ClassList"] as $row) {
         $enroll->deleteEnroll($studentCode, $row["ClassName"]);
     }
+} else if (isset($_GET["checkLimit"])) {
+    // var_dump($_POST);
+    $classroom = $_POST["classroom"];
+
+    $schedule = new Schedule();
+
+    $data = $schedule->getClassByClassName($classroom);
+    $max = $data["num_student"];
+
+    //count in enroll table
+    $enroll = new Enroll();
+    $countStudent = $enroll->countStudent($classroom);
+
+    if ($countStudent === $max)
+        echo json_encode(["full" => true]);
+    else
+        echo json_encode(["full" => false]);
+    // echo $data["num_student"];
 }

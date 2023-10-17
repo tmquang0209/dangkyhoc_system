@@ -55,11 +55,11 @@ class Schedule extends DB
     }
 
 
-    public function updateSchedule($classID, $day, $shift, $classroom, $teacherCode)
+    public function updateSchedule($classID, $day, $shift, $classroom, $numStudent, $teacherCode)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("UPDATE `schedule` SET `day`= ?,`shift`= ?,`classroom`= ?,`teacher_code`= ? WHERE id = ?");
-        $query->execute([$day, $shift, $classroom, $teacherCode, $classID]);
+        $query = $stmt->prepare("UPDATE `schedule` SET `day`= ?,`shift`= ?,`classroom`= ?, `num_student` = ?, `teacher_code`= ? WHERE id = ?");
+        $query->execute([$day, $shift, $classroom, $teacherCode, $numStudent, $classID]);
     }
 
     public function convertData()

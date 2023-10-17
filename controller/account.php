@@ -31,7 +31,7 @@ if (isset($_GET["check"])) {
                     echo json_encode(["success" => true, "message" => "Login success.", "info" => $_SESSION["account"]]);
                 }
             } else {
-                echo json_encode(["success" => false, "message" => "Account isn't exists."]);
+                echo json_encode(["success" => false, "message" => "Account isn't exists.", "check" => $username]);
             }
         } else {
             echo json_encode(["success" => false, "message" => "Please fill in all information."]);
