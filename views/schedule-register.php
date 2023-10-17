@@ -14,7 +14,7 @@ if (!isset($_SESSION["account"])) {
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <title>
-        Thời khóa biểu toàn trường
+        Đăng ký học
     </title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -38,9 +38,9 @@ if (!isset($_SESSION["account"])) {
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Trang</a></li>
-                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Thời khóa biểu toàn trường</li>
+                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Đăng ký học</li>
                     </ol>
-                    <h6 class="font-weight-bolder text-white mb-0">Thời khóa biểu toàn trường</h6>
+                    <h6 class="font-weight-bolder text-white mb-0">Hiển thị học kỳ chọn</h6>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -81,13 +81,90 @@ if (!isset($_SESSION["account"])) {
                 </div>
             </div>
         </nav>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+        <style>
+            .title {
+                text-align: center;
+                font-size: 20px;
+                font-weight: bold;
+                color: red;
+            }
+
+            .search-box {
+                display: block;
+                text-align: center;
+            }
+
+            .subject-box {
+                margin-left: 10px;
+                height: 250px;
+                overflow-y: auto;
+            }
+
+            .subject-box .subject {
+                padding-left: 5px;
+            }
+
+            .subject-box .subject span {
+                font-size: 15px;
+                color: blue;
+            }
+
+            .subject-box .subject ul {
+                padding: 5px;
+            }
+
+            label {
+                padding-left: 5px;
+                display: inline-block;
+                max-width: 100%;
+                margin-bottom: 5px;
+                font-weight: 500;
+                font-size: 13px;
+                width: 90%;
+            }
+
+            .subject-box .subject .list-class {
+                font-size: 15px;
+            }
+
+            table td {
+                width: 100px;
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+
+            table th {
+                width: 100px;
+            }
+
+            .loading-result {
+                width: 100%;
+                display: fixed;
+                margin: auto;
+                padding: 10px 50px;
+
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            table .sub {
+                background-color: yellow;
+                vertical-align: middle;
+                text-align: center;
+            }
+        </style>
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Thời khóa biểu toàn trường</h6>
+                            <h6>Đăng ký học phần</h6>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
@@ -115,9 +192,62 @@ if (!isset($_SESSION["account"])) {
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="studentCode">
+                        <div class="subject-box" id="subject-box"></div>
                         <div class="card-body px-0 pt-0 pb-2">
-                            <div class="table-responsive p-0" id="render-table">
-
+                            <div class="col-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="max-width:5px">Ca</th>
+                                            <th>Thứ 2</th>
+                                            <th>Thứ 3</th>
+                                            <th>Thứ 4</th>
+                                            <th>Thứ 5</th>
+                                            <th>Thứ 6</th>
+                                            <th>Thứ 7</th>
+                                            <th>Chủ nhật</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        for ($i = 1; $i <= 13; $i++) {
+                                            echo '<tr>
+                                                    <td id="shift" data-item="' . $i . '" style="max-width:5px">' . $i . '</td>
+                                                    <td id="mon_' . $i . '"></td>
+                                                    <td id="tue_' . $i . '"></td>
+                                                    <td id="wed_' . $i . '"></td>
+                                                    <td id="thur_' . $i . '"></td>
+                                                    <td id="fri_' . $i . '"></td>
+                                                    <td id="sat_' . $i . '"></td>
+                                                    <td id="sun_' . $i . '"></td>
+                                                </tr>';
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="sm-12">
+                                <div class="title">Môn học đã chọn</div>
+                                <div class="loading-result">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Môn học</th>
+                                                <th style="max-width:5px;">Số tín</th>
+                                                <th style="max-width:50px">Hệ số</th>
+                                                <th>Người dạy</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="selectedSubject"></tbody>
+                                        <tr>
+                                            <td>Tổng số tín</td>
+                                            <td style="max-width:5px;" id="countCredits"></td>
+                                            <td style="max-width:50px;" id="fee"></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -125,42 +255,9 @@ if (!isset($_SESSION["account"])) {
             </div>
         </div>
     </main>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            const renderTable = document.getElementById("render-table");
-            $("#semester").on("change", function() {
-                const value = this.value;
-                console.log(value);
-                $.post(`/views/schedule-semester.php`, {
-                    semester: value,
-                    type: "guess"
-                }).done(function(res) {
-                    renderTable.innerHTML = res;
-                });
-            });
-        });
-
-        function searchSubject() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("subName");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("schedule-table");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[2];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="/app.js"></script>
     <!--   Core JS Files   -->
     <?php
     include_once("footer.php");

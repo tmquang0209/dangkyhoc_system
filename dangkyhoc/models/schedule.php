@@ -15,7 +15,6 @@ class Schedule extends DB
         $stmt = $this->connect();
         $query = $stmt->prepare("SELECT schedule.*, subject.subject_name, subject.credits, subject.coef FROM schedule JOIN subject ON schedule.subject_code = subject.subject_code WHERE group_id = ?");
         $query->execute([$semesterID]);
-        // return $query->debugDumpParams();
         return $query->fetchAll();
     }
 

@@ -67,7 +67,7 @@ $schedule = new Schedule();
 
                     // Di chuyển tệp từ đường dẫn tạm thời đến đường dẫn mục tiêu
                     if (move_uploaded_file($tempFilePath, $targetFilePath)) {
-                        if ($xlsx = SimpleXLSX::parse('../data/thoikhoabieu.xlsx')) {
+                        if ($xlsx = SimpleXLSX::parse('/data/thoikhoabieu.xlsx')) {
                             $rawData = $xlsx->rows();
                             // echo $xlsx->toHTML();
                             $count = 0;

@@ -1,6 +1,6 @@
 ﻿<?php
-// header('Content-Type: application/json');
 date_default_timezone_set("Asia/Ho_Chi_Minh");
+
 class DB
 {
     private $serverName = "localhost";
@@ -19,5 +19,12 @@ class DB
         }
         return $conn;
     }
+}
+
+//check login
+$curPageName = substr($_SERVER["SCRIPT_NAME"], strrpos($_SERVER["SCRIPT_NAME"], "/") + 1);
+
+if ($curPageName !== "sign-in.html") {
+    
 }
 ?>

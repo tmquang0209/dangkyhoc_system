@@ -24588,19 +24588,19 @@ hr.horizontal.gray-light {
   margin: 0;
 }
 
-.table td,
+/* .table td,
 .table th {
   white-space: nowrap;
-}
+} */
 
 .table.align-items-center td,
 .table.align-items-center th {
   vertical-align: middle;
 }
 
-.table tbody tr:last-child td {
+/* .table tbody tr:last-child td {
   border-width: 0;
-}
+} */
 
 .table> :not(:last-child)> :last-child>* {
   border-bottom-color: #e9ecef;
