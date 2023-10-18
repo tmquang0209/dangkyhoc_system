@@ -19,6 +19,21 @@ class Schedule extends DB
         return $query->fetchAll();
     }
 
+    public function getTeachingSchedule($semesterID, $teacherCode)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("SELECT schedule.id, subject.subject_code, schedule.class_name, subject.subject_name, GROUP_CONCAT('Thứ ', day, '(', shift, ')<br />') AS teaching_schedule, COUNT(enroll.id) as count_student FROM schedule JOIN subject ON schedule.subject_code = subject.subject_code LEFT JOIN enroll ON schedule.id = enroll.schedule_id WHERE semester_id = ? AND teacher_code = ? GROUP BY subject.subject_code, schedule.class_name, subject.subject_name");
+        $query->execute([$semesterID, $teacherCode]);
+        return $query->fetchAll();
+    }
+    public function getTeachingScheduleDetail($id)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("SELECT S.student_code, S.student_name, S.birthday, S.classroom_code FROM `enroll` E JOIN `student` S ON E.student_code = S.student_code WHERE schedule_id = ?");
+        $query->execute([$id]);
+        return $query->fetchAll();
+    }
+
     public function getClassByID($id)
     {
         $stmt = $this->connect();

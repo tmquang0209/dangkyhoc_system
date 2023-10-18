@@ -3,6 +3,11 @@ session_start();
 if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
     exit;
+} else {
+    if (!$_SESSION["account"]["student_code"]) {
+        header('Location: /');
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
