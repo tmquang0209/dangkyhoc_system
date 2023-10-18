@@ -191,9 +191,10 @@ $id = (int)$_GET["id"];
             $.post(`/controller/tuition.php?tuitionByID`, {
                 id
             }).done(function(res) {
-                console.log(res);
                 const data = JSON.parse(res.trim());
+                if (data.length === 0) location.href = "/views/tuition.php";
                 const general = data.general;
+
 
                 semesterName.innerText = `${general.semester_name} năm học ${general.year}`
                 studentCode.innerText = general.student_code;

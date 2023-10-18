@@ -106,39 +106,7 @@ if (!isset($_SESSION["account"]["student_code"])) {
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="align-middle text-center">1</td>
-                                            <td>
-                                                <p class="text-xs font-weight-bold mb-0">Học kỳ 1 năm 2023-2024</p>
-                                            </td>
-                                            <td class="align-middle text-center text-sm">
-                                                10.000.000 VND
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <span class="text-secondary text-xs font-weight-bold">CHUA_THU</span>
-                                            </td>
-                                            <td class="align-middle">
-                                                <a href="/views/tuition-detail.php?id=" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                                    Xem chi tiết
-                                                </a>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="align-middle text-center">Tổng</td>
-                                            <td>
-                                                <p class="text-s font-weight-bold mb-0">6 kỳ</p>
-                                            </td>
-                                            <td class="align-middle text-center text-s">
-                                                10.000.000 VND
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <span class="text-secondary text-xs font-weight-bold"></span>
-                                            </td>
-                                            <td class="align-middle"></td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody id="list"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -148,7 +116,69 @@ if (!isset($_SESSION["account"]["student_code"])) {
         </div>
     </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <script>
+        const semesterList = document.getElementById("list");
+        $(document).ready(async function() {
+            get();
+        });
+
+        function get() {
+            $.post(`/controller/tuition.php?student`).done(function(res) {
+                const data = JSON.parse(res.trim()).result;
+                let total = 0;
+                data.forEach((item) => {
+                    render(item);
+                    total += item.total_tuition;
+                })
+
+                const html = `<tr>
+                                <td class="align-middle text-center">Tổng</td>
+                                <td>
+                                    <p class="text-s font-weight-bold mb-0">${data.length} kỳ</p>
+                                </td>
+                                <td class="align-middle text-center text-s">
+                                    ${total.toLocaleString('vi-VN',{
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    })}
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold"></span>
+                                </td>
+                                <td class="align-middle"></td>
+                            </tr>`
+
+                semesterList.insertAdjacentHTML("beforeend", html);
+            });
+        }
+
+        function render(item) {
+            console.log(item);
+            const html = `
+            <tr>
+                <td class="align-middle text-center">1</td>
+                <td>
+                    <p class="text-xs font-weight-bold mb-0">${item.semester_name} năm học ${item.year}</p>
+                </td>
+                <td class="align-middle text-center text-sm">
+                    ${item.total_tuition.toLocaleString('vi-VN',{
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    })}
+                </td>
+                <td class="align-middle text-center">
+                    <span class="text-secondary text-xs font-weight-bold">${item.status}</span>
+                </td>
+                <td class="align-middle">
+                    <a href="/views/tuition-detail.php?id=${item.tuition_id}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                        Xem chi tiết
+                    </a>
+                </td>
+            </tr>
+            `
+            semesterList.insertAdjacentHTML("beforeend", html);
+        }
+    </script>
     <?php
     include_once("footer.php");
     ?>

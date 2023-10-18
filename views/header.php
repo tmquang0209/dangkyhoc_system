@@ -41,6 +41,10 @@
                     <span class="nav-link-text ms-1">Đăng ký học</span>
                 </a>
             </li>
+
+            <?php
+            if(isset($_SESSION["account"]["staff"])){
+            ?>
             <!-- set admin -->
             <li class="nav-item">
                 <a class="nav-link " href="/views/tuition-manager.php">
@@ -59,6 +63,7 @@
                 </a>
             </li>
             <!-- end set admin -->
+            <?php } ?>
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
             </li>

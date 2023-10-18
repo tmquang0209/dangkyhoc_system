@@ -23,9 +23,9 @@ class Tuition extends DB
 
         foreach ($data as $row) {
             // Check if tuition details already exist for the student, semester, and subject
-            $checkQuery = $stmt->prepare("SELECT T.tuition_id 
-                                        FROM tuition T 
-                                        JOIN tuition_detail TD ON T.tuition_id = TD.tuition_id 
+            $checkQuery = $stmt->prepare("SELECT T.tuition_id
+                                        FROM tuition T
+                                        JOIN tuition_detail TD ON T.tuition_id = TD.tuition_id
                                         WHERE student_code = ? AND semester_id = ? AND subject_code = ?");
             $checkQuery->execute([$row["student_code"], $row["semester_id"], $row["subject_code"]]);
             $result = $checkQuery->fetch();
@@ -82,7 +82,7 @@ class Tuition extends DB
     public function getTuition($studentCode)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("SELECT student.student_code, semester_id, CONCAT(semester.semester_name,' năm học ', semester.year) AS semester_name, SUM(credits) AS total_credits, SUM(credits*coef*cost) AS total_tuition, status FROM `tuition` JOIN semester ON tuition.semester_id = semester.id JOIN student ON tuition.student_code = student.student_code WHERE student.student_code = ? GROUP BY semester.semester_name;");
+        $query = $stmt->prepare("SELECT T.tuition_id, SM.semester_name, SM.year, S.student_code, S.student_name, SUM(TD.credits*TD.coef*SM.cash) AS total_tuition, T.status FROM tuition T JOIN tuition_detail TD ON T.tuition_id = TD.tuition_id JOIN student S ON T.student_code = S.student_code JOIN semester SM ON T.semester_id = SM.semester_id WHERE T.student_code = ? GROUP BY T.tuition_id, S.student_code, S.student_name");
         $query->execute([$studentCode]);
         return $query->fetchAll();
     }

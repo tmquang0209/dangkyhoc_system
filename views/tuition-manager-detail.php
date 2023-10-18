@@ -5,7 +5,7 @@ if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
     exit;
 }
-if (!isset($_SESSION["account"]["student_code"])) {
+if (!isset($_SESSION["account"]["staff_code"])) {
     header("Location: /");
     exit();
 }

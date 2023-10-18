@@ -1,4 +1,15 @@
-﻿<!DOCTYPE html>
+﻿<?php
+session_start();
+if (!isset($_SESSION["account"])) {
+    header('Location: /views/sign-in.html');
+    exit;
+} else {
+    if (!$_SESSION["account"]["staff_code"]) {
+        header('Location: /');
+    }
+}
+?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
