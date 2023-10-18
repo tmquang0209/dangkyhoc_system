@@ -1,10 +1,11 @@
 ﻿<?php
+session_start();
 include "../vendor/autoload.php";
 include_once("../models/schedule.php");
 include "../models/fee.php";
 
+$schedule = new Schedule();
 if (isset($_GET["update"])) {
-    $schedule = new Schedule();
 
     $classID = $_POST["classID"];
     $day = $_POST["day"];
@@ -18,7 +19,6 @@ if (isset($_GET["update"])) {
     if (isset($_POST)) {
         $semesterID = (int)$_POST["semesterID"];
 
-        $schedule = new Schedule();
         $scheduleList = $schedule->getSchedule($semesterID);
         $data = array();
 
@@ -47,4 +47,15 @@ if (isset($_GET["update"])) {
     $fee = new Fee();
     $semesterID = $jsonData["semesterid"];
     echo $fee->getFee($semesterID);
+} else if (isset($_GET["getTeachingSchedule"])) {
+    $semesterID = (int)$_POST["semesterID"];
+    $teacher = $_SESSION["account"];
+
+    $data = $schedule->getTeachingSchedule($semesterID, $teacher["teacher_code"]);
+
+    echo json_encode(["result" => $data]);
+} else if (isset($_GET["teachingScheduleDetail"])) {
+    $id = (int)$_POST["id"];
+    $data = $schedule->getTeachingScheduleDetail($id);
+    echo json_encode(["result" => $data]);
 }
