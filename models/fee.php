@@ -4,7 +4,6 @@ include_once dirname(__DIR__) . "/models/schedule.php";
 
 class Fee extends DB
 {
-
     public function __construct()
     {
     }
@@ -23,4 +22,6 @@ class Fee extends DB
         $query = $stmt->prepare("UPDATE semester SET cash = ? WHERE semester_id = ?");
         $query->execute([$value, $semester]);
     }
+
+    // public function getFee
 }

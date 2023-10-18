@@ -26,6 +26,84 @@ if (!isset($_SESSION["account"])) {
     <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: red;
+        }
+
+        .search-box {
+            display: block;
+            text-align: center;
+        }
+
+        .subject-box {
+            margin-left: 10px;
+            height: 250px;
+            overflow-y: auto;
+        }
+
+        .subject-box .subject {
+            padding-left: 5px;
+        }
+
+        .subject-box .subject span {
+            font-size: 15px;
+            color: blue;
+        }
+
+        .subject-box .subject ul {
+            padding: 5px;
+        }
+
+        label {
+            padding-left: 5px;
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 13px;
+            width: 90%;
+        }
+
+        .subject-box .subject .list-class {
+            font-size: 15px;
+        }
+
+        table td {
+            width: 100px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        table th {
+            width: 100px;
+        }
+
+        .loading-result {
+            width: 100%;
+            display: fixed;
+            margin: auto;
+            padding: 10px 50px;
+
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        table .sub {
+            background-color: yellow;
+            vertical-align: middle;
+            text-align: center;
+            margin: 10px;
+        }
+    </style>
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -81,83 +159,6 @@ if (!isset($_SESSION["account"])) {
                 </div>
             </div>
         </nav>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-
-        <style>
-            .title {
-                text-align: center;
-                font-size: 20px;
-                font-weight: bold;
-                color: red;
-            }
-
-            .search-box {
-                display: block;
-                text-align: center;
-            }
-
-            .subject-box {
-                margin-left: 10px;
-                height: 250px;
-                overflow-y: auto;
-            }
-
-            .subject-box .subject {
-                padding-left: 5px;
-            }
-
-            .subject-box .subject span {
-                font-size: 15px;
-                color: blue;
-            }
-
-            .subject-box .subject ul {
-                padding: 5px;
-            }
-
-            label {
-                padding-left: 5px;
-                display: inline-block;
-                max-width: 100%;
-                margin-bottom: 5px;
-                font-weight: 500;
-                font-size: 13px;
-                width: 90%;
-            }
-
-            .subject-box .subject .list-class {
-                font-size: 15px;
-            }
-
-            table td {
-                width: 100px;
-                word-break: break-word;
-                overflow-wrap: break-word;
-            }
-
-            table th {
-                width: 100px;
-            }
-
-            .loading-result {
-                width: 100%;
-                display: fixed;
-                margin: auto;
-                padding: 10px 50px;
-
-            }
-
-            .hidden {
-                display: none;
-            }
-
-            table .sub {
-                background-color: yellow;
-                vertical-align: middle;
-                text-align: center;
-            }
-        </style>
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
@@ -206,24 +207,26 @@ if (!isset($_SESSION["account"])) {
                         <?php } ?>
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="col-12">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th style="max-width:10px">Ca</th>
-                                            <th>Thứ 2</th>
-                                            <th>Thứ 3</th>
-                                            <th>Thứ 4</th>
-                                            <th>Thứ 5</th>
-                                            <th>Thứ 6</th>
-                                            <th>Thứ 7</th>
-                                            <th>Chủ nhật</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        for ($i = 1; $i <= 13; $i++) {
-                                            echo '<tr>
-                                                    <td id="shift" data-item="' . $i . '" style="max-width:10px">' . $i . '</td>
+                                <div class="table-responsive p-0">
+
+                                    <table class="table align-items-center mb-0 table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="max-width:15vh" class="align-middle text-center text-s">Ca</th>
+                                                <th>Thứ 2</th>
+                                                <th>Thứ 3</th>
+                                                <th>Thứ 4</th>
+                                                <th>Thứ 5</th>
+                                                <th>Thứ 6</th>
+                                                <th>Thứ 7</th>
+                                                <th>Chủ nhật</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for ($i = 1; $i <= 13; $i++) {
+                                                echo '<tr>
+                                                    <td id="shift" data-item="' . $i . '" class="align-middle text-center text-s" style="max-width:15vh">' . $i . '</td>
                                                     <td id="mon_' . $i . '"></td>
                                                     <td id="tue_' . $i . '"></td>
                                                     <td id="wed_' . $i . '"></td>
@@ -232,10 +235,11 @@ if (!isset($_SESSION["account"])) {
                                                     <td id="sat_' . $i . '"></td>
                                                     <td id="sun_' . $i . '"></td>
                                                 </tr>';
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="sm-12">
                                 <div class="title">Môn học đã chọn</div>

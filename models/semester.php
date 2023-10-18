@@ -17,7 +17,7 @@ class Semester extends DB
     public function getSemester($id)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("SELECT * FROM semester WHERE id = ?");
+        $query = $stmt->prepare("SELECT * FROM semester WHERE semester_id = ?");
         $query->execute([$id]);
         return $query->fetch();
     }
@@ -51,5 +51,20 @@ class Semester extends DB
         }
         return -1;
     }
+
+    public function getFee($semesterID)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("SELECT cash FROM semester WHERE semester_id = ?");
+        $query->execute([$semesterID]);
+
+        return $query->fetch()["cash"];
+    }
+
+    public function updateFee($semesterID, $value)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("UPDATE semester SET cash = ? WHERE semester_id = ?");
+        $query->execute([$value, $semesterID]);
+    }
 }
-?>
