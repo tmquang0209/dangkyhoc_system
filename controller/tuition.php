@@ -43,10 +43,16 @@ if (isset($_GET["manager"])) {
     $result = $tuition->getTuitionByID($id);
     $detail = $tuition->getTuitionDetail($id);
 
-    if ($result["student_code"] != $_SESSION["account"]["student_code"] || !isset($_SESSION["account"]["staff_code"])) {
+    if (!isset($_SESSION["account"]["staff_code"]) && !isset($_SESSION["account"]["student_code"])) {
         echo json_encode([]);
         exit;
+    } else if (isset($_SESSION["account"]["student_code"])) {
+        if ($result["student_code"] != $_SESSION["account"]["student_code"]) {
+            echo json_encode([]);
+            exit;
+        }
     }
+
 
     echo json_encode(["id" => $id, "general" => $result, "detail" => $detail, "account" => $_SESSION["account"]]);
 } else if (isset($_GET["student"])) {

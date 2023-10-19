@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
@@ -18,7 +18,7 @@ if (!isset($_SESSION["account"])) {
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <title>
-        Quản lý học phí
+        Quản lý kỳ học
     </title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -42,9 +42,9 @@ if (!isset($_SESSION["account"])) {
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Trang</a></li>
-                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Quản lý học phí</li>
+                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Quản lý kỳ học</li>
                     </ol>
-                    <h6 class="font-weight-bolder text-white mb-0">Quản lý học phí</h6>
+                    <h6 class="font-weight-bolder text-white mb-0">Quản lý kỳ học</h6>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -64,7 +64,7 @@ if (!isset($_SESSION["account"])) {
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Quản lý học phí</h6>
+                            <h6>Quản lý kỳ học</h6>
                         </div>
                         <?php if (isset($_GET["update"])) {
                             include("../models/semester.php");
@@ -73,31 +73,23 @@ if (!isset($_SESSION["account"])) {
                             $getInfo =  $semester->getSemester($id);
                             // var_dump($getInfoClass);
                         ?>
-
-                            <style>
-                                #suggestions {
-                                    position: absolute;
-                                    background-color: #fff;
-                                    /* border: 1px solid #ccc; */
-                                    max-height: 150px;
-                                    overflow-y: auto;
-                                    width: 100%;
-                                }
-
-                                #suggestions div {
-                                    padding: 8px;
-                                    cursor: pointer;
-                                }
-
-                                #suggestions div:hover {
-                                    background-color: #f0f0f0;
-                                }
-                            </style>
                             <input hidden class="form-control" type="text" value="<?= $getInfo["semester_id"] ?>" id="semesterID">
                             <div class="card-body">
                                 <p class="text-uppercase text-sm">Cập nhật đơn vị học phí <?= $getInfo["semester_name"] ?> năm học <?= $getInfo["year"]; ?></p>
                                 <div id="message"></div>
                                 <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Học kỳ</label>
+                                            <input class="form-control" type="text" value="<?= $getInfo["semester_name"] ?>" id="semesterName">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Năm học</label>
+                                            <input class="form-control" type="text" value="<?= $getInfo["year"] ?>" id="year">
+                                        </div>
+                                    </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Học phí 1 tín</label>
@@ -111,21 +103,27 @@ if (!isset($_SESSION["account"])) {
 
                             <script>
                                 var message = document.getElementById("message");
+                                var semesterName = document.getElementById("semesterName");
+                                var year = document.getElementById("year");
                                 var cash = document.getElementById("cash");
                                 var updateBtn = document.getElementById("updateBtn");
                                 updateBtn.addEventListener("click", function(e) {
                                     const semesterID = document.getElementById("semesterID").value;
+                                    const semesterNameValue = semesterName.value;
+                                    const yearValue = year.value;
                                     const cashValue = cash.value;
 
                                     if (cashValue) {
-                                        $.post(`/controller/tuition.php?updateUnit`, {
+                                        $.post(`/controller/semester.php?update`, {
                                             semesterID,
+                                            semesterName: semesterNameValue,
+                                            year: yearValue,
                                             cash: cashValue,
                                         }, function(res) {
                                             console.log(res);
                                             message.innerHTML = `<div class="alert alert-success" role="alert">Cập nhật thông tin thành công.</div>`
                                             setTimeout(() => {
-                                                location.href = "/views/tuition-manager.php"
+                                                location.href = "/views/semester-manager.php"
                                             }, 1000)
                                         });
                                     } else {
@@ -178,13 +176,13 @@ if (!isset($_SESSION["account"])) {
             $.post(`/controller/tuition.php?manager`).done(function(res) {
                 const data = JSON.parse(res.trim()).result;
 
-                data.forEach((item, index) => {
-                    render(item, index);
+                data.forEach((item) => {
+                    render(item);
                 })
             });
         }
 
-        function render(item, index) {
+        function render(item) {
             console.log(item);
             const html = `
             <tr>
@@ -200,19 +198,13 @@ if (!isset($_SESSION["account"])) {
                 </td>
 
                 <td class="align-middle">
-                    <a href="/views/tuition-manager-detail.php?id=${item.semester_id}" data-toggle="tooltip" data-original-title="Edit user">
-                        <span class="badge badge-sm bg-gradient-success">
-                            Xem chi tiết
-                        </span>
-                    </a>
-                    <br />
-                    <a href="/views/tuition-manager.php?update=${item.semester_id}" data-toggle="tooltip" data-original-title="Edit user">
+                    <a href="/views/semester-manager.php?update=${item.semester_id}" data-toggle="tooltip" data-original-title="Edit user">
                         <span class="badge badge-sm bg-gradient-warning">
                             Sửa
                         </span>
                     </a>
                     <br />
-                    <a href="/views/tuition-manager-detail.php?id=${item.semester_id}" data-toggle="tooltip" data-original-title="Edit user">
+                    <a href="/views/semester-manager-detail.php?id=${item.semester_id}" data-toggle="tooltip" data-original-title="Edit user">
                         <span class="badge badge-sm bg-gradient-danger">
                             Xóa
                         </span>
@@ -227,10 +219,10 @@ if (!isset($_SESSION["account"])) {
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("subName");
             filter = input.value.toUpperCase();
-            table = document.getElementById("schedule-table");
+            table = document.getElementById("list");
             tr = table.getElementsByTagName("tr");
             for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[2];
+                td = tr[i].getElementsByTagName("td")[1];
                 if (td) {
                     txtValue = td.textContent || td.innerText;
                     if (txtValue.toUpperCase().indexOf(filter) > -1) {

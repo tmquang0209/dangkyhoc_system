@@ -1,8 +1,24 @@
 ﻿<?php
 session_start();
+include dirname(__DIR__) . "/vendor/autoload.php";
+include dirname(__DIR__) . "/models/semester.php";
+include dirname(__DIR__) . "/models/schedule.php";
+
+$schedule = new Schedule();
+$semester = new Semester();
+
+$semesterInfo = $semester->getSemesterList();
+
+use Shuchkin\SimpleXLSX;
+
 if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
     exit;
+} else {
+    if (!isset($_SESSION["account"]["staff_code"])) {
+        header('Location: /');
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -49,34 +65,7 @@ if (!isset($_SESSION["account"])) {
                             <input type="text" class="form-control" placeholder="Type here...">
                         </div>
                     </div>
-                    <ul class="navbar-nav  justify-content-end">
-                        <li class="nav-item d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
-                                <i class="fa fa-user me-sm-1"></i>
-                                <span class="d-sm-inline d-none">Sign In</span>
-                            </a>
-                        </li>
-                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
-                                <div class="sidenav-toggler-inner">
-                                    <i class="sidenav-toggler-line bg-white"></i>
-                                    <i class="sidenav-toggler-line bg-white"></i>
-                                    <i class="sidenav-toggler-line bg-white"></i>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item px-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0">
-                                <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-bell cursor-pointer"></i>
-                            </a>
-                            <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                            </ul>
-                        </li>
+                    <ul class="navbar-nav  justify-content-end" id="nav-profile">
                     </ul>
                 </div>
             </div>
@@ -87,12 +76,134 @@ if (!isset($_SESSION["account"])) {
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Quản lý thời khóa biểu</h6>
+                            <div class="d-flex align-items-center">
+                                <p class="mb-0">Quản lý thời khóa biểu</p>
+                                <button class="btn btn-primary btn-sm ms-auto"> <a href="?add" style="color: white;">Cập nhật thời khóa biểu</a> </button>
+                            </div>
                         </div>
-                        <?php if (isset($_GET["update"])) {
-                            include("../models/schedule.php");
+
+                        <?php if (isset($_GET["add"])) {
+                            if (isset($_POST["submit"])) {
+                                $selectType = (int)$_POST["selectType"];
+                                $semesterid = $_POST["semester"];
+                                if ($selectType == 0) {
+                                    $year = $_POST["year"];
+                                    $id = $semester->addSemester($semesterid, $year);
+                                } else {
+                                    $id = $semesterid;
+                                }
+                                // Kiểm tra xem có lỗi nào trong quá trình tải lên không
+                                if ($_FILES["excelFile"]["error"] == UPLOAD_ERR_OK) {
+                                    // Đường dẫn tạm thời của tệp trên máy chủ
+                                    $tempFilePath = $_FILES["excelFile"]["tmp_name"];
+
+                                    // Đường dẫn và tên tệp trên máy chủ mục tiêu
+                                    $targetDirectory = dirname(__DIR__) . "/data/"; // Thay đổi đường dẫn này thành thư mục bạn muốn lưu tệp vào
+                                    $targetFileName = basename($_FILES["excelFile"]["name"]);
+                                    $targetFilePath = $targetDirectory . $targetFileName;
+
+                                    // Di chuyển tệp từ đường dẫn tạm thời đến đường dẫn mục tiêu
+                                    if (move_uploaded_file($tempFilePath, $targetFilePath)) {
+                                        if ($xlsx = SimpleXLSX::parse('../data/' . $targetFileName)) {
+                                            $rawData = $xlsx->rows();
+                                            // echo $xlsx->toHTML();
+                                            $count = 0;
+                                            foreach ($rawData as $row) {
+                                                if (
+                                                    $count++ != 0
+                                                ) {
+                                                    $data = [
+                                                        "SubID" => $row[1],
+                                                        "SubName" => $row[2],
+                                                        "Classname" => $row[3],
+                                                        "Day" => $row[4],
+                                                        "Shift" => $row[6],
+                                                        "Classroom" => $row[7],
+                                                        "Credits" => $row[8],
+                                                        "Coef" => $row[9],
+                                                        "Teacher" => $row[10],
+                                                        "numStudent" => $row[11]
+                                                    ];
+                                                    // var_dump($data);
+                                                    $schedule->addClass($data["SubID"], $data["SubName"], $data["Credits"], $data["Coef"], $id, $data["Classname"], $data["Day"], $data["Shift"], $data["Classroom"], $data["numStudent"], $data["Teacher"]);
+                                                }
+                                            }
+                                        } else {
+                                            echo SimpleXLSX::parseError();
+                                        }
+                                    } else {
+                                        echo "Có lỗi xảy ra khi lưu tệp.";
+                                    }
+                                } else {
+                                    echo "Có lỗi xảy ra khi tải lên tệp.";
+                                }
+                            }
+                        ?>
+                            <input hidden class="form-control" type="text" value="<?= $getInfo["semester_id"] ?>" id="semesterID">
+                            <div class="card-body">
+                                <div id="message"></div>
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="form-floating mb-3 mt-3">
+                                            <select class="form-select" name="selectType" id="selectType">
+                                                <option value="0">Thêm mới kỳ học</option>
+                                                <option value="1">Kỳ học có sẵn</option>
+                                            </select>
+                                            <label for="sel1" class="form-label">Loại:</label>
+                                        </div>
+                                        <div class="form-floating mb-3 mt-3" id="semester_select" style="display:none;">
+                                            <select class="form-select" id="" name="semester">
+                                                <option value="">---Lựa chọn---</option>
+                                                <?php
+                                                foreach ($semesterInfo as $row) {
+                                                    echo '<option value="' . $row["id"] . '">' . $row["semester_name"] . " năm học " . $row["year"] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                            <label for="sel1" class="form-label">Học kỳ:</label>
+                                        </div>
+                                        <div id="semester_input" style="display:block;">
+                                            <div class="form-floating mb-3 mt-3">
+                                                <input type="text" name="semester" class="form-control" placeholder="Nhập thời tên học kỳ ...">
+                                                <label for="sel1" class="form-label">Học kỳ:</label>
+                                            </div>
+                                            <div class="form-floating mb-3 mt-3">
+                                                <input type="text" name="year" class="form-control" placeholder="Nhập năm học ...">
+                                                <label for="sel1" class="form-label">Năm học:</label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="file" name="excelFile" id="excelFile" class="form-control">
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-floating mb-3 mt-3">
+                                                <button class="btn btn-success" name="submit">Submit</button>
+                                                <button class="btn btn-secondary" name="cancel">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <script>
+                                const selectType = document.getElementById("selectType");
+                                selectType.addEventListener("change", function() {
+                                    const value = selectType.value;
+                                    console.log(value);
+                                    if (value === "0") {
+                                        const semInput = document.getElementById("semester_input");
+                                        semInput.style.display = "block";
+                                        const semSelect = document.getElementById("semester_select");
+                                        semSelect.style.display = "none";
+                                    } else if (value === "1") {
+                                        const semSelect = document.getElementById("semester_select");
+                                        semSelect.style.display = "block";
+                                        const semInput = document.getElementById("semester_input");
+                                        semInput.style.display = "none";
+                                    }
+                                })
+                            </script>
+                        <?php } else if (isset($_GET["update"])) {
                             $id = (int)$_GET["update"];
-                            $schedule = new Schedule();
                             $getInfoClass =  $schedule->getClassByID($id);
                             // var_dump($getInfoClass);
                         ?>
@@ -245,11 +356,6 @@ if (!isset($_SESSION["account"])) {
                         <?php } ?>
                         <div class="row">
                             <div class="col-md-4">
-                                <?php
-                                include_once __DIR__ . "/../models/semester.php";
-                                $semester = new Semester();
-                                $semesterInfo = $semester->getSemesterList();
-                                ?>
                                 <div class="form-group" style="margin-left:10px">
                                     <label for="example-text-input" class="form-control-label">Học kỳ</label>
                                     <select name="" class="form-control" id="semester">
@@ -263,7 +369,7 @@ if (!isset($_SESSION["account"])) {
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group" style="margin-top:25px">
+                                <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Tìm kiếm môn học</label>
                                     <input name="" class="form-control" id="subName" onkeyup="searchSubject()">
                                 </div>
@@ -271,7 +377,6 @@ if (!isset($_SESSION["account"])) {
                         </div>
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="table-responsive p-0" id="render-table">
-
                             </div>
                         </div>
                     </div>
@@ -323,6 +428,15 @@ if (!isset($_SESSION["account"])) {
                     }
                 }
             }
+        }
+
+        function deleteClass(id) {
+            const confirmDel = confirm("Bạn có chắc chắn muốn xóa lớp học này không? Dữ liệu xóa bao gồm (Lớp BT, các lớp SV đã đăng ký)");
+            if (confirmDel) {
+                alert("Bạn đã xóa thành công");
+                location.reload();
+            }
+
         }
     </script>
     <!--   Core JS Files   -->

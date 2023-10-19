@@ -41,7 +41,7 @@ if (isset($_GET["check"])) {
     if (isset($_SESSION["account"]))
         $info = $_SESSION["account"];
     else
-        $info = null;
+        $info = [];
 
     echo json_encode($info);
 }

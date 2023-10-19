@@ -1,5 +1,6 @@
-﻿<?php
+<?php
 session_start();
+include_once __DIR__ . "/../models/semester.php";
 if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
     exit;
@@ -8,6 +9,14 @@ if (!isset($_SESSION["account"])) {
         header('Location: /');
         exit;
     }
+}
+$semester = new Semester();
+$semesterInfo = $semester->getSemesterList();
+if (isset($_GET["semester_id"])) {
+    $semesterDetail = $semester->getSemester($_GET["semester_id"]);
+    $title = $semesterDetail["semester_name"] . " năm học " . $semesterDetail["year"];
+} else {
+    $title = "";
 }
 ?>
 <!DOCTYPE html>
@@ -19,7 +28,7 @@ if (!isset($_SESSION["account"])) {
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <title>
-        Đăng ký học
+        Thời khóa biểu cá nhân
     </title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -42,44 +51,6 @@ if (!isset($_SESSION["account"])) {
             color: red;
         }
 
-        .search-box {
-            display: block;
-            text-align: center;
-        }
-
-        .subject-box {
-            margin-left: 10px;
-            height: 250px;
-            overflow-y: auto;
-        }
-
-        .subject-box .subject {
-            padding-left: 5px;
-        }
-
-        .subject-box .subject span {
-            font-size: 15px;
-            color: blue;
-        }
-
-        .subject-box .subject ul {
-            padding: 5px;
-        }
-
-        label {
-            padding-left: 5px;
-            display: inline-block;
-            max-width: 100%;
-            margin-bottom: 5px;
-            font-weight: 500;
-            font-size: 13px;
-            width: 90%;
-        }
-
-        .subject-box .subject .list-class {
-            font-size: 15px;
-        }
-
         table td {
             width: 100px;
             word-break: break-word;
@@ -95,7 +66,6 @@ if (!isset($_SESSION["account"])) {
             display: fixed;
             margin: auto;
             padding: 10px 50px;
-
         }
 
         .hidden {
@@ -121,9 +91,9 @@ if (!isset($_SESSION["account"])) {
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Trang</a></li>
-                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Đăng ký học</li>
+                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Thời khóa biểu cá nhân</li>
                     </ol>
-                    <!-- <h6 class="font-weight-bolder text-white mb-0">Hiển thị học kỳ chọn</h6> -->
+                    <h6 class="font-weight-bolder text-white mb-0"><?= $title; ?></h6>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -143,16 +113,11 @@ if (!isset($_SESSION["account"])) {
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Đăng ký học phần</h6>
+                            <h6><?= $title; ?></h6>
                         </div>
                         <div class="row">
                             <?php if (!isset($_GET["semester_id"])) { ?>
                                 <div class="col-md-4">
-                                    <?php
-                                    include_once __DIR__ . "/../models/semester.php";
-                                    $semester = new Semester();
-                                    $semesterInfo = $semester->getSemesterList();
-                                    ?>
                                     <div class="form-group" style="margin-left:10px">
                                         <label for="example-text-input" class="form-control-label">Học kỳ</label>
                                         <select name="" class="form-control" id="semester">
@@ -172,21 +137,11 @@ if (!isset($_SESSION["account"])) {
                                     })
                                 </script>
                             <?php } ?>
-                            <div class="col-md-4">
-                                <div class="form-group" style="margin-left:10px;margin-top:25px">
-                                    <label for="example-text-input" class="form-control-label">Tìm kiếm môn học</label>
-                                    <input name="" class="form-control" id="subName" onkeyup="searchSubject()">
-                                </div>
-                            </div>
                         </div>
                         <input type="hidden" id="studentCode">
-                        <?php if (isset($_GET["semester_id"])) { ?>
-                            <div class="subject-box" id="subject-box"></div>
-                        <?php } ?>
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="col-12">
                                 <div class="table-responsive p-0">
-
                                     <table class="table align-items-center mb-0 table-bordered">
                                         <thead>
                                             <tr>
@@ -220,7 +175,7 @@ if (!isset($_SESSION["account"])) {
                                 </div>
                             </div>
                             <div class="sm-12">
-                                <div class="title">Môn học đã chọn</div>
+                                <div class="title">Môn học đã đăng ký</div>
                                 <div class="loading-result">
                                     <table class="table table-bordered">
                                         <thead>

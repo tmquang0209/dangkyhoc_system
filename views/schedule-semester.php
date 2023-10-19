@@ -65,11 +65,26 @@ if (isset($_POST["semester"])) {
                     <td>" . $row["subject_code"] . "</td>
                     <td style=\"max-width: 200px;white-space: pre-line;overflow: hidden;text-overflow: ellipsis;\">" . $row["subject_name"] . "</td>
                     <td style=\"max-width: 100px;white-space: pre-line;overflow: hidden;text-overflow: ellipsis;\">" . $row["class_name"] . "</td>
-                    <td> Thứ: " . $row["day"] . "<br />Ca: " . $row["shift"] . "<br /> Phòng: " . $row["classroom"] . "</td>
+                    <td> Thứ: " . $row["day"] . "<br />Ca: " . $row["shift"] . "<br /> Phòng: " . $row["classroom"] . "<br /> Số lượng: " . $row["count_student"] . "/" . $row["num_student"] . "</td>
                     <td style=\"max-width: 80px;white-space: pre-line;overflow: hidden;text-overflow: ellipsis;\">" . $row["teacher_name"] . " (" . $row["teacher_code"] . ")" . "</td>
-                    <td>
-                            <a href=\"?update=" . $row["id"] . "\" class=\"update\">Cập nhật</a>
-                            <a href=\"?delete=" . $row["id"] . "\" class=\"delete\">Xóa</a> 
+                    <td class=\"align-middle\">
+                    <a href=\"/views/teaching-schedule-detail.php?id=" . $row["id"] . "\" data-toggle=\"tooltip\" data-original-title=\"Edit user\">
+                    <span class=\"badge badge-sm bg-gradient-success\">
+                    Xem chi tiết
+                    </span>
+                    </a>
+                    <br />
+                    <a href=\"?update=" . $row["id"] . "\" data-toggle=\"tooltip\" data-original-title=\"Edit user\">
+                        <span class=\"badge badge-sm bg-gradient-warning\">
+                            Sửa
+                        </span>
+                    </a>
+                    <br />
+                    <a  onclick=\"return deleteClass(" . $row["id"] . ");\" data-toggle=\"tooltip\" data-original-title=\"Edit user\">
+                        <span class=\"badge badge-sm bg-gradient-danger\">
+                            Xóa
+                        </span>
+                    </a>
                     </td>
                 </tr>";
         }

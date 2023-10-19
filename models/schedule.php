@@ -13,9 +13,8 @@ class Schedule extends DB
     public function getSchedule($semesterID)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("SELECT schedule.*, subject.subject_name, subject.credits, subject.coef, teacher.teacher_code, teacher.teacher_name FROM schedule JOIN subject ON schedule.subject_code = subject.subject_code JOIN teacher ON schedule.teacher_code = teacher.teacher_code WHERE semester_id = ? ORDER BY subject_code ASC");
+        $query = $stmt->prepare("SELECT S.id, S.semester_id, S.subject_code, class_name, classroom, day, shift, num_student, subject.subject_name, subject.credits, subject.coef, teacher.teacher_code, teacher.teacher_name, COUNT(enroll.id) AS count_student FROM `schedule` S JOIN subject ON S.subject_code = subject.subject_code JOIN teacher ON S.teacher_code = teacher.teacher_code LEFT JOIN enroll ON S.id = enroll.schedule_id WHERE semester_id = ? GROUP BY S.id, S.semester_id, S.subject_code, day, shift, num_student, subject.subject_name, subject.credits, subject.coef, teacher.teacher_code, teacher.teacher_name ORDER BY subject_code ASC;");
         $query->execute([$semesterID]);
-        // return $query->debugDumpParams();
         return $query->fetchAll();
     }
 
@@ -37,7 +36,7 @@ class Schedule extends DB
     public function getClassByID($id)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("SELECT S.*, T.teacher_name FROM schedule S JOIN teacher T ON S.teacher_code = T.teacher_code WHERE id = ?");
+        $query = $stmt->prepare("SELECT S.*, T.teacher_name, SM.semester_id, SM.semester_name, SM.year FROM schedule S JOIN teacher T ON S.teacher_code = T.teacher_code JOIN semester SM ON S.semester_id = SM.semester_id WHERE id = ?");
         $query->execute([$id]);
         return $query->fetch();
     }
@@ -50,10 +49,10 @@ class Schedule extends DB
         return $query->fetch();
     }
 
-    public function addClass($subCode, $subName, $credits, $coef, $groupID, $className, $day, $shift, $classroom, $teacher = "")
+    public function addClass($subCode, $subName, $credits, $coef, $groupID, $className, $day, $shift, $classroom, $numStudent, $teacher = "")
     {
         $stmt = $this->connect();
-        $queryCheck = $stmt->prepare("SELECT class_name FROM schedule WHERE `group_id` = ? AND `class_name`= ? AND `day` = ? AND `shift`= ? AND `classroom` = ?");
+        $queryCheck = $stmt->prepare("SELECT class_name FROM schedule WHERE `semester_id` = ? AND `class_name`= ? AND `day` = ? AND `shift`= ? AND `classroom` = ?");
         $queryCheck->execute([$groupID, $className, $day, $shift, $classroom]);
 
         // Fetch the result as an associative array
@@ -64,8 +63,21 @@ class Schedule extends DB
             $subject = new Subject();
             $subject->addSubject($subCode, $subName, $credits, $coef);
 
-            $query = $stmt->prepare("INSERT INTO schedule (`group_id`, `subject_code`, `class_name`, `day`, `shift`, `classroom`, `teacher`) VALUES (?,?,?,?,?,?,?)");
-            $query->execute([$groupID, $subCode, $className, $day, $shift, $classroom, $teacher]);
+            $teacherName = explode("(", $teacher)[0];
+            $teacherCode = explode("(", $teacher)[1];
+            $teacherCode = str_replace(")", "", $teacherCode);
+
+            $queryTeacher = $stmt->prepare("SELECT `teacher_code` FROM `teacher` WHERE `teacher_code` = ?");
+            $queryTeacher->execute([$teacherCode]);
+            $fetchTeacher = $queryTeacher->fetch();
+            if (!$fetchTeacher) {
+                $queryInsertTeacher = $stmt->prepare("INSERT INTO `teacher`(`teacher_code`, `teacher_name`, `password`) VALUES (?, ?, ?)");
+                $queryInsertTeacher->execute([$teacherCode, $teacherName, "e10adc3949ba59abbe56e057f20f883e"]);
+            }
+
+
+            $query = $stmt->prepare("INSERT INTO schedule (`semester_id`, `subject_code`, `class_name`, `day`, `shift`, `classroom`, `teacher_code`, `num_student`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $query->execute([$groupID, $subCode, $className, $day, $shift, $classroom, $teacherCode, $numStudent]);
         }
     }
 

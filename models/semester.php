@@ -30,12 +30,12 @@ class Semester extends DB
         return $stmt->lastInsertId();
     }
 
-    public function editSemester($id, $name, $year)
+    public function editSemester($id, $name, $year, $tuition)
     {
         if ($this->getSemester($id)) {
             $stmt = $this->connect();
-            $query = $stmt->prepare("UPDATE semester SET `semester_name` = ?, `year` = ? WHERE id = ?");
-            $query->execute([$name, $year, $id]);
+            $query = $stmt->prepare("UPDATE semester SET `semester_name` = ?, `year` = ?, `cash` = ? WHERE semester_id = ?");
+            $query->execute([$name, $year, $tuition, $id]);
             return 1;
         }
         return -1;

@@ -49,6 +49,8 @@ if (!isset($_SESSION["account"])) {
                             <input type="text" class="form-control" placeholder="Type here...">
                         </div>
                     </div>
+                    <ul class="navbar-nav  justify-content-end" id="nav-profile">
+                    </ul>
                 </div>
             </div>
         </nav>

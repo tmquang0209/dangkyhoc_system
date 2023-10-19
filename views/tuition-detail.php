@@ -5,10 +5,10 @@ if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
     exit;
 }
-if (!isset($_SESSION["account"]["student_code"])) {
-    header("Location: /");
-    exit();
-}
+// if (!isset($_SESSION["account"]["student_code"])) {
+//     header("Location: /");
+//     exit();
+// }
 if (!isset($_GET["id"])) {
     header("Location: /views/fee.php");
     exit();
@@ -60,34 +60,7 @@ $id = (int)$_GET["id"];
                             <input type="text" class="form-control" placeholder="Type here...">
                         </div>
                     </div>
-                    <ul class="navbar-nav  justify-content-end">
-                        <li class="nav-item d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
-                                <i class="fa fa-user me-sm-1"></i>
-                                <span class="d-sm-inline d-none">Sign In</span>
-                            </a>
-                        </li>
-                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
-                                <div class="sidenav-toggler-inner">
-                                    <i class="sidenav-toggler-line bg-white"></i>
-                                    <i class="sidenav-toggler-line bg-white"></i>
-                                    <i class="sidenav-toggler-line bg-white"></i>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item px-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0">
-                                <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item dropdown pe-2 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-white p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-bell cursor-pointer"></i>
-                            </a>
-                            <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
-                            </ul>
-                        </li>
+                    <ul class="navbar-nav  justify-content-end" id="nav-profile">
                     </ul>
                 </div>
             </div>
@@ -175,7 +148,6 @@ $id = (int)$_GET["id"];
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const id = <?= $id; ?>;
-        // console.log(id);
         const semesterName = document.getElementById("semesterName");
         const studentCode = document.getElementById("studentCode");
         const studentName = document.getElementById("studentName");
@@ -191,7 +163,9 @@ $id = (int)$_GET["id"];
             $.post(`/controller/tuition.php?tuitionByID`, {
                 id
             }).done(function(res) {
+                // console.log(res);
                 const data = JSON.parse(res.trim());
+                // console.log(data);
                 if (data.length === 0) location.href = "/views/tuition.php";
                 const general = data.general;
 
@@ -199,7 +173,10 @@ $id = (int)$_GET["id"];
                 semesterName.innerText = `${general.semester_name} năm học ${general.year}`
                 studentCode.innerText = general.student_code;
                 studentName.innerText = general.student_name;
-                tuitionTotal.innerText = general.total_tuition;
+                tuitionTotal.innerText = general.total_tuition.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                });
                 status.innerText = general.status;
 
                 const detailSubject = data.detail;
