@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 include dirname(__DIR__) . "/vendor/autoload.php";
 include dirname(__DIR__) . "/models/semester.php";
@@ -119,13 +119,11 @@ if (!isset($_SESSION["account"])) {
                                                         "Day" => $row[4],
                                                         "Shift" => $row[6],
                                                         "Classroom" => $row[7],
-                                                        "Credits" => $row[8],
-                                                        "Coef" => $row[9],
-                                                        "Teacher" => $row[10],
-                                                        "numStudent" => $row[11]
+                                                        "Teacher" => $row[8],
+                                                        "numStudent" => $row[9]
                                                     ];
                                                     // var_dump($data);
-                                                    $schedule->addClass($data["SubID"], $data["SubName"], $data["Credits"], $data["Coef"], $id, $data["Classname"], $data["Day"], $data["Shift"], $data["Classroom"], $data["numStudent"], $data["Teacher"]);
+                                                    $schedule->addClass($data["SubID"], $data["SubName"], $id, $data["Classname"], $data["Day"], $data["Shift"], $data["Classroom"], $data["numStudent"], $data["Teacher"]);
                                                 }
                                             }
                                         } else {

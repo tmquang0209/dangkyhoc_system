@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');

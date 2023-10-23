@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include_once dirname(__DIR__) . "/models/db.php";
 include_once dirname(__DIR__) . "/vendor/autoload.php";
 include_once dirname(__DIR__) . "/models/subject.php";
@@ -49,7 +49,7 @@ class Schedule extends DB
         return $query->fetch();
     }
 
-    public function addClass($subCode, $subName, $credits, $coef, $groupID, $className, $day, $shift, $classroom, $numStudent, $teacher = "")
+    public function addClass($subCode, $subName, $groupID, $className, $day, $shift, $classroom, $numStudent, $teacher = "")
     {
         $stmt = $this->connect();
         $queryCheck = $stmt->prepare("SELECT class_name FROM schedule WHERE `semester_id` = ? AND `class_name`= ? AND `day` = ? AND `shift`= ? AND `classroom` = ?");
@@ -61,7 +61,7 @@ class Schedule extends DB
         // Check if a row was returned and if 'class_name' exists in the result
         if ($row == 0) {
             $subject = new Subject();
-            $subject->addSubject($subCode, $subName, $credits, $coef);
+            $subject->addSubject($subCode, $subName, -1, -1);
 
             $teacherName = explode("(", $teacher)[0];
             $teacherCode = explode("(", $teacher)[1];

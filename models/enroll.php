@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include "../vendor/autoload.php";
 require_once(dirname(__DIR__) . "/models/db.php");
 require_once("schedule.php");

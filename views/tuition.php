@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // for student
 session_start();
 if (!isset($_SESSION["account"])) {

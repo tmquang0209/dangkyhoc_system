@@ -1,5 +1,5 @@
-﻿<?php
-session_start();
+<?php
+// session_start();
 include_once("../models/staff.php");
 include_once("../models/teacher.php");
 include_once("../models/student.php");

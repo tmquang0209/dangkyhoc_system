@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include_once(dirname(__DIR__) . "/models/db.php");
 class Semester extends DB
 {

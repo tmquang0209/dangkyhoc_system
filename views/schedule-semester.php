@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // include "../models/subject.php";
 include "../models/schedule.php";
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include_once("../models/teacher.php");
 
 if (isset($_GET["listTeacher"])) {

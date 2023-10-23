@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 if (!isset($_SESSION["account"])) {
     header('Location: /views/sign-in.html');
@@ -173,7 +173,7 @@ if (!isset($_SESSION["account"])) {
                                 </script>
                             <?php } ?>
                             <div class="col-md-4">
-                                <div class="form-group" style="margin-left:10px;margin-top:25px">
+                                <div class="form-group" style="margin-left:10px;">
                                     <label for="example-text-input" class="form-control-label">Tìm kiếm môn học</label>
                                     <input name="" class="form-control" id="subName" onkeyup="searchSubject()">
                                 </div>
