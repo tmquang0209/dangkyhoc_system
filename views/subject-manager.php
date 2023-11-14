@@ -54,6 +54,15 @@ if (!isset($_SESSION["account"])) {
                         </div>
                     </div>
                     <ul class="navbar-nav  justify-content-end" id="nav-profile">
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                          <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                            </div>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -64,7 +73,10 @@ if (!isset($_SESSION["account"])) {
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Quản lý môn học</h6>
+                            <div class="d-flex align-items-center">
+                                <p class="mb-0">Quản lý môn học</p>
+                                <button class="btn btn-primary btn-sm ms-auto"> <a href="?add" style="color: white;">Thêm môn học</a> </button>
+                            </div>
                         </div>
                         <?php if (isset($_GET["update"])) {
                             include("../models/subject.php");
@@ -130,13 +142,13 @@ if (!isset($_SESSION["account"])) {
                                             coef: coefValue
                                         }, function(res) {
                                             console.log(res);
-                                            message.innerHTML = `<div class="alert alert-success" role="alert">Cập nhật thông tin thành công.</div>`
+                                            message.innerHTML = `<div class="alert alert-success" role="alert" style="color: white;">Cập nhật thông tin thành công.</div>`
                                             setTimeout(() => {
                                                 location.href = "/views/subject-manager.php"
                                             }, 1000)
                                         });
                                     } else {
-                                        message.innerHTML = `<div class="alert alert-danger" role="alert">Vui lòng nhập đầy đủ thông tin.</div>`
+                                        message.innerHTML = `<div class="alert alert-danger" role="alert" style="color: white;">Vui lòng nhập đầy đủ thông tin.</div>`
                                     }
                                 })
 
@@ -155,6 +167,81 @@ if (!isset($_SESSION["account"])) {
                                     }).fail((err) => {
                                         console.error(err);
                                     })
+                                })
+                            </script>
+                        <?php } ?>
+                        <?php if (isset($_GET["add"])) { ?>
+                            <div class="card-body">
+                                <p class="text-uppercase text-sm">Thêm mới môn học</p>
+                                <div id="message"></div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Mã môn</label>
+                                            <input class="form-control" type="text" value="" id="subjectCode">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Tên môn học</label>
+                                            <input class="form-control" type="text" value="" id="subjectName">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Tín chỉ</label>
+                                            <input class="form-control" type="number" value="" id="credits">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Hệ số</label>
+                                            <input class="form-control" type="number" value="" id="coef">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm ms-auto" id="updateBtn">Thêm mới</button>
+                            </div>
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+                            <script>
+                                const message = document.getElementById("message");
+                                const subjectCode = document.getElementById("subjectCode");
+                                const subjectName = document.getElementById("subjectName");
+                                const credits = document.getElementById("credits");
+                                const coef = document.getElementById("coef");
+                                const updateBtn = document.getElementById("updateBtn");
+
+                                updateBtn.addEventListener("click", function(e) {
+                                    const subjectCodeValue = subjectCode.value;
+                                    const subjectNameValue = subjectName.value;
+                                    const creditsValue = credits.value;
+                                    const coefValue = coef.value;
+
+                                    console.log(subjectCodeValue, subjectNameValue, creditsValue, coefValue);
+
+                                    if (subjectCodeValue && subjectNameValue && creditsValue && coefValue) {
+                                        $.post(`/controller/subject.php?add`, {
+                                            subjectCode: subjectCodeValue,
+                                            subjectName: subjectNameValue,
+                                            credits: creditsValue,
+                                            coef: coefValue
+                                        }, function(res) {
+                                            const data = JSON.parse(res.trim());
+                                            
+                                            if(data.success){
+                                                message.innerHTML = `<div class="alert alert-success" role="alert" style="color: white;">${data.message}</div>`
+                                                setTimeout(() => {
+                                                    location.href = "/views/subject-manager.php"
+                                                }, 1000)
+                                            }else{
+                                                message.innerHTML = `<div class="alert alert-warning" role="alert" style="color: white;">${data.message}</div>`
+                                            }
+                                            
+                                        });
+                                    } else {
+                                        message.innerHTML = `<div class="alert alert-danger" role="alert" style="color: white;">Vui lòng nhập đầy đủ thông tin.</div>`
+                                    }
                                 })
                             </script>
                         <?php } ?>
@@ -209,7 +296,6 @@ if (!isset($_SESSION["account"])) {
         }
 
         function render(item, index) {
-            // console.log(item);
             const html = `
             <tr>
                 <td class="align-middle text-center">${index + 1}</td>
@@ -225,7 +311,7 @@ if (!isset($_SESSION["account"])) {
                         </span>
                     </a>
                     <br />
-                    <a href="/views/semester-manager-detail.php?id=${item.subject_code}" data-toggle="tooltip" data-original-title="Edit user">
+                    <a href="/views/subject-manager.php?id=${item.subject_code}" data-toggle="tooltip" data-original-title="Edit user">
                         <span class="badge badge-sm bg-gradient-danger">
                             Xóa
                         </span>

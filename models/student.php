@@ -17,18 +17,32 @@ class Student extends DB
         return $query->fetch();
     }
 
-    public function updateInfo($studentCode, $studentName, $birthday, $mobilePhone, $address)
+    public function updateInfo($studentCode, $studentName, $birthday, $mobilePhone, $address, $email)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("UPDATE `student` SET `student_name`=?,`birthday`=?,`phone_number`=?,`address`=? WHERE `student_code` = ?");
-        $query->execute([$studentName, $birthday, $mobilePhone, $address, $studentCode]);
+        $query = $stmt->prepare("UPDATE `student` SET `student_name`=?,`birthday`=?,`phone_number`=?,`address`=?,`email`=? WHERE `student_code` = ?");
+        $query->execute([$studentName, $birthday, $mobilePhone, $address, $email, $studentCode]);
+    }
+    
+    public function updateInfoPer($studentCode, $mobilePhone, $address, $email)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("UPDATE `student` SET `phone_number`=?,`address`=?,`email`=? WHERE `student_code` = ?");
+        $query->execute([$mobilePhone, $address, $email, $studentCode]);
+    }
+    
+    public function updatePassword($studentCode, $password)
+    {
+        $stmt = $this->connect();
+        $query = $stmt->prepare("UPDATE `student` SET `password` = ? WHERE `student_code` = ?");
+        $query->execute([$password, $studentCode]);
     }
 
-    public function add($studentCode, $studentName, $password, $birthday, $mobilePhone, $address)
+    public function add($studentCode, $studentName, $password, $birthday, $mobilePhone, $address, $email)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("INSERT INTO `student`(`student_code`, `student_name`, `password`, `birthday`, `phone_number`, `address`) VALUES (?,?,?,?,?,?)");
-        $query->execute([$studentCode, $studentName, $password, $birthday, $mobilePhone, $address]);
+        $query = $stmt->prepare("INSERT INTO `student`(`student_code`, `student_name`, `password`, `birthday`, `phone_number`, `address`, `email`) VALUES (?,?,?,?,?,?,?)");
+        $query->execute([$studentCode, $studentName, $password, $birthday, $mobilePhone, $address, $email]);
     }
 
     public function getList()

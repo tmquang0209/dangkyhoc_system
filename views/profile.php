@@ -50,6 +50,15 @@ if (!isset($_SESSION["account"])) {
                         </div>
                     </div>
                     <ul class="navbar-nav  justify-content-end" id="nav-profile">
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                          <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                            </div>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -97,7 +106,7 @@ if (!isset($_SESSION["account"])) {
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Email</label>
-                                        <input class="form-control" type="text" value="" id="email" disabled>
+                                        <input class="form-control" type="text" value="" id="email">
                                     </div>
                                 </div>
 
@@ -108,13 +117,13 @@ if (!isset($_SESSION["account"])) {
                                     </div>
                                 </div>
 
-                                <div class="col-md-12">
+                                <div class="col-md-12" id="classroomDiv">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Lớp học phần</label>
                                         <input class="form-control" type="text" value="" id="classroom" disabled>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12" id="teacherNameDiv">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Cố vấn học tập</label>
                                         <input class="form-control" type="text" value="" id="teacherName" disabled>
@@ -146,10 +155,15 @@ if (!isset($_SESSION["account"])) {
                 studentName.value = info.staff_name || info.teacher_name || info.student_name;
                 birthday.value = info.birthday;
                 address.value = info.address;
-                // email.value = info.email;
+                email.value = info.email;
                 phoneNumber.value = info.phone_number;
-                classroom.value = info.classroom_code;
-                teacherName.value = info.consultant_code + " " + info.consultant_name;
+                if(info.student_code){
+                    classroom.value = info.classroom_code;
+                    teacherName.value = info.consultant_code + " " + info.consultant_name;
+                }else{
+                    document.getElementById("classroomDiv").style.display = "none";
+                    document.getElementById("teacherNameDiv").style.display = "none";
+                }
             });
         });
 
@@ -158,6 +172,10 @@ if (!isset($_SESSION["account"])) {
         })
 
         phoneNumber.addEventListener("change", function() {
+            update();
+        })
+
+        email.addEventListener("change", function() {
             update();
         })
 
@@ -172,7 +190,8 @@ if (!isset($_SESSION["account"])) {
         const update = () => {
             $.post(`/controller/account.php?updateInfo`, {
                 address: address.value,
-                phoneNumber: phoneNumber.value
+                phoneNumber: phoneNumber.value,
+                email: email.value
             }).done(function(res) {
                 console.log("Change success");
             }).fail(function(err) {

@@ -13,7 +13,11 @@ class Fee extends DB
         $stmt = $this->connect();
         $query = $stmt->prepare("SELECT cash FROM semester WHERE semester_id = ?");
         $query->execute([$semester]);
-        return $query->fetch()["cash"];
+        $fetch = $query->fetch();
+        if($fetch)
+            return $query->fetch()["cash"];
+        else
+            return 0;
     }
 
     public function setFee($semester, $value)

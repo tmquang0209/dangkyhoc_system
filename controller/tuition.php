@@ -1,5 +1,5 @@
 <?php
-// session_start();
+session_start();
 include_once("../models/tuition.php");
 include_once("../models/semester.php");
 

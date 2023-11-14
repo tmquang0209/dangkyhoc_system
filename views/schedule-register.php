@@ -133,6 +133,15 @@ if (!isset($_SESSION["account"])) {
                         </div>
                     </div>
                     <ul class="navbar-nav  justify-content-end" id="nav-profile">
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                          <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                            </div>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -151,7 +160,7 @@ if (!isset($_SESSION["account"])) {
                                     <?php
                                     include_once __DIR__ . "/../models/semester.php";
                                     $semester = new Semester();
-                                    $semesterInfo = $semester->getSemesterList();
+                                    $semesterInfo = $semester->getSemesterList("time");
                                     ?>
                                     <div class="form-group" style="margin-left:10px">
                                         <label for="example-text-input" class="form-control-label">Học kỳ</label>
@@ -180,7 +189,14 @@ if (!isset($_SESSION["account"])) {
                             </div>
                         </div>
                         <input type="hidden" id="studentCode">
-                        <?php if (isset($_GET["semester_id"])) { ?>
+                        <?php if (isset($_GET["semester_id"])) {
+                        include_once __DIR__ . "/../models/semester.php";
+                        $semester = new Semester();
+                        $check = $semester->checkTime($_GET["semester_id"]);
+                        if($check==0){
+                        echo '<script>location.href="/"</script>';
+                        } 
+                        ?>
                             <div class="subject-box" id="subject-box"></div>
                         <?php } ?>
                         <div class="card-body px-0 pt-0 pb-2">

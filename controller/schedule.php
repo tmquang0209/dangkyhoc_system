@@ -1,5 +1,5 @@
 <?php
-// session_start();
+session_start();
 include "../vendor/autoload.php";
 include_once("../models/schedule.php");
 include "../models/fee.php";

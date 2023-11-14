@@ -1,6 +1,6 @@
 <?php
-// @ob_start();
-// session_start(); // Start the session at the very beginning of the script
+@ob_start();
+session_start(); // Start the session at the very beginning of the script
 date_default_timezone_set("Asia/Ho_Chi_Minh");
 class DB
 {

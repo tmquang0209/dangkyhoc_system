@@ -53,9 +53,39 @@
                     </a>
                 </li>
             <?php } ?>
-            <?php
-            if (isset($_SESSION["account"]["staff_code"])) {
-            ?>
+            <?php if (isset($_SESSION["account"]["staff_code"])) { ?>
+                <li class="nav-item">
+                    <a class="nav-link " href="/views/subject-manager.php">
+                        <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fa fa-calendar-o text-success text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Quản lý môn học</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/views/staff-manager.php">
+                        <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fa fa-users text-danger text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Quản lý nhân sự</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/views/teacher-manager.php">
+                        <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fa fa-users text-danger text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Quản lý giảng viên</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/views/student-manager.php">
+                        <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fa fa-users text-danger text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Quản lý sinh viên</span>
+                    </a>
+                </li>
                 <!-- set admin -->
                 <li class="nav-item">
                     <a class="nav-link " href="/views/tuition-manager.php">
@@ -71,6 +101,14 @@
                             <i class="fa fa-calendar-o text-danger text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Quản lý thời khóa biểu</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/views/semester-manager.php">
+                        <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fa fa-calendar-o text-danger text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Quản lý học kỳ</span>
                     </a>
                 </li>
                 <!-- end set admin -->

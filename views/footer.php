@@ -18,8 +18,7 @@
     $(document).ready(function() {
         $.post("/controller/account.php?getInfo").done((res) => {
             const data = JSON.parse(res.trim());
-            console.log(data);
-            if (data) {
+            if (Object.keys(data).length) {
                 const html = `
                         <li class="nav-item d-flex align-items-center">
                             <a href="/views/profile.php" class="nav-link text-white font-weight-bold px-0">
@@ -28,11 +27,16 @@
                             </a>
                         </li>
                         <li class="nav-item px-3 d-flex align-items-center">
+                            <a href="/views/change-password.php" class="nav-link text-white p-0">
+                                Đổi mật khẩu
+                            </a>
+                        </li>
+                        <li class="nav-item px-3 d-flex align-items-center">
                             <a href="/views/logout.php" class="nav-link text-white p-0">
                                 Đăng xuất
                             </a>
                         </li>`
-                navProfile.insertAdjacentHTML("beforeend", html)
+                navProfile.insertAdjacentHTML("afterbegin", html)
             } else {
                 const html = `
                         <li class="nav-item px-3 d-flex align-items-center">
@@ -40,8 +44,7 @@
                                 Đăng nhập
                             </a>
                         </li>`
-                navProfile.insertAdjacentHTML("beforeend", html)
-
+                navProfile.insertAdjacentHTML("afterbegin", html)
             }
         }).fail((err) => {
             console.error(err);

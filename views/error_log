@@ -1,0 +1,6 @@
+[06-Nov-2023 11:14:58 Asia/Ho_Chi_Minh] PHP Warning:  Undefined variable $getInfo in /home/tmquangt/dkh.toluu.site/demo5/views/schedule-manager.php on line 149
+[06-Nov-2023 11:14:58 Asia/Ho_Chi_Minh] PHP Warning:  Trying to access array offset on value of type null in /home/tmquangt/dkh.toluu.site/demo5/views/schedule-manager.php on line 149
+[06-Nov-2023 11:14:58 Asia/Ho_Chi_Minh] PHP Warning:  Undefined array key "id" in /home/tmquangt/dkh.toluu.site/demo5/views/schedule-manager.php on line 166
+[06-Nov-2023 11:14:58 Asia/Ho_Chi_Minh] PHP Warning:  Undefined array key "id" in /home/tmquangt/dkh.toluu.site/demo5/views/schedule-manager.php on line 166
+[06-Nov-2023 11:14:58 Asia/Ho_Chi_Minh] PHP Warning:  Undefined array key "id" in /home/tmquangt/dkh.toluu.site/demo5/views/schedule-manager.php on line 166
+[06-Nov-2023 11:14:58 Asia/Ho_Chi_Minh] PHP Warning:  Undefined array key "id" in /home/tmquangt/dkh.toluu.site/demo5/views/schedule-manager.php on line 166

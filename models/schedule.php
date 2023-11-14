@@ -28,8 +28,10 @@ class Schedule extends DB
     public function getTeachingScheduleDetail($id)
     {
         $stmt = $this->connect();
-        $query = $stmt->prepare("SELECT S.student_code, S.student_name, S.birthday, S.classroom_code FROM `enroll` E JOIN `student` S ON E.student_code = S.student_code WHERE schedule_id = ?");
-        $query->execute([$id]);
+        $query = $stmt->prepare("SELECT student.student_code, student.student_name, student.birthday, student.classroom_code, CONCAT(semester_name, ' năm học ', year) AS semester, class_name
+        FROM enroll JOIN schedule ON enroll.schedule_id = schedule.id JOIN student ON enroll.student_code = student.student_code JOIN semester ON schedule.semester_id = semester.semester_id
+        WHERE schedule.class_name IN (SELECT class_name FROM schedule WHERE id = ?) AND schedule.semester_id IN (SELECT semester_id FROM schedule WHERE id = ?)");
+        $query->execute([$id, $id]);
         return $query->fetchAll();
     }
 

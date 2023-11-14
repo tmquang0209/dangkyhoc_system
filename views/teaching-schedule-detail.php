@@ -24,7 +24,7 @@ $id = (int)$_GET["id"];
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <title>
-        Học phí
+        Chi tiết lớp học
     </title>
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -48,10 +48,10 @@ $id = (int)$_GET["id"];
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="/">Trang</a></li>
-                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="/views/fee.php">Học phí</a></li>
-                        <li class="breadcrumb-item text-sm text-white active" aria-current="page">Chi tiết học phí</li>
+                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="/views/teaching-schedule.php" id="semester"></a></li>
+                        <li class="breadcrumb-item text-sm text-white active" aria-current="page" id="classname"></li>
                     </ol>
-                    <h6 class="font-weight-bolder text-white mb-0">Học phí</h6>
+                    <h6 class="font-weight-bolder text-white mb-0" id="des"></h6>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -61,6 +61,15 @@ $id = (int)$_GET["id"];
                         </div>
                     </div>
                     <ul class="navbar-nav  justify-content-end" id="nav-profile">
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                          <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                            </div>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -98,6 +107,10 @@ $id = (int)$_GET["id"];
     <script>
         const id = <?= $id; ?>;
         const detail = document.getElementById("detail");
+        const title = document.querySelector("title");
+        const semester = document.getElementById("semester");
+        const classname = document.getElementById("classname");
+        const des = document.getElementById("des");
 
         $(document).ready(async function() {
             get();
@@ -107,9 +120,15 @@ $id = (int)$_GET["id"];
             $.post(`/controller/schedule.php?teachingScheduleDetail`, {
                 id
             }).done(function(res) {
+                console.log(res);
                 const data = JSON.parse(res.trim());
                 if (data.length === 0) location.href = "/views/teaching-schedule.php";
                 const detailSubject = data.result;
+                const info = detailSubject[0];
+                title.innerText = info.class_name + " - " + info.semester
+                semester.innerText = info.semester;
+                classname.innerText = info.class_name;
+                des.innerText = "Danh sách sinh viên đăng ký lớp " + info.class_name + " - " + info.semester;
                 detailSubject.forEach((item, index) => {
                     render(item, index);
                 })
@@ -117,7 +136,7 @@ $id = (int)$_GET["id"];
         }
 
         function render(item, index) {
-            // console.log(item);
+            console.log(item);
             const html = `
             <tr>
                 <td class="align-middle text-center">${index + 1}</td>

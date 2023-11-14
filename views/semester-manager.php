@@ -54,6 +54,15 @@ if (!isset($_SESSION["account"])) {
                         </div>
                     </div>
                     <ul class="navbar-nav  justify-content-end" id="nav-profile">
+                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                          <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                              <i class="sidenav-toggler-line bg-white"></i>
+                            </div>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -64,36 +73,126 @@ if (!isset($_SESSION["account"])) {
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Quản lý kỳ học</h6>
+                            <div class="d-flex align-items-center">
+                                <p class="mb-0">Quản lý kỳ học</p>
+                                <button class="btn btn-primary btn-sm ms-auto"> <a href="?add" style="color: white;">Thêm mới</a> </button>
+                            </div>
                         </div>
+                        <?php if (isset($_GET["add"])) { ?>
+                            <div class="card-body">
+                                <p class="text-uppercase text-sm">Thêm mới học kỳ</p>
+                                <div id="message"></div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Học kỳ</label>
+                                            <input class="form-control" type="text" value="" id="semesterName">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Năm học</label>
+                                            <input class="form-control" type="text" value="" id="year">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Học phí 1 tín</label>
+                                            <input class="form-control" type="number" value="" id="cash">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Bắt đầu đăng ký</label>
+                                            <input class="form-control" type="date" value="" id="start">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Kết thúc đăng ký</label>
+                                            <input class="form-control" type="date" value="" id="end">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm ms-auto" id="updateBtn">Thêm mới</button>
+                            </div>
+                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+                            <script>
+                                var message = document.getElementById("message");
+                                var semesterName = document.getElementById("semesterName");
+                                var year = document.getElementById("year");
+                                var cash = document.getElementById("cash");
+                                var start = document.getElementById("start");
+                                var end = document.getElementById("end");
+                                var updateBtn = document.getElementById("updateBtn");
+                                updateBtn.addEventListener("click", function(e) {
+                                    const semesterNameValue = semesterName.value;
+                                    const yearValue = year.value;
+                                    const cashValue = cash.value;
+                                    const startValue = start.value;
+                                    const endValue = end.value;
+
+                                    if (cashValue && semesterNameValue && yearValue) {
+                                        $.post(`/controller/semester.php?add`, {
+                                            semesterName: semesterNameValue,
+                                            year: yearValue,
+                                            cash: cashValue,
+                                            start: startValue,
+                                            end: endValue
+                                        }, function(res) {
+                                            console.log(res);
+                                            message.innerHTML = `<div class="alert alert-success" role="alert">Thêm kỳ học mới thành công.</div>`
+                                            setTimeout(() => {
+                                                location.href = "/views/semester-manager.php"
+                                            }, 1000)
+                                        });
+                                    } else {
+                                        message.innerHTML = `<div class="alert alert-danger" role="alert">Vui lòng nhập đầy đủ thông tin.</div>`
+                                    }
+                                })
+                            </script>
+                        <?php } ?>
                         <?php if (isset($_GET["update"])) {
                             include("../models/semester.php");
                             $id = (int)$_GET["update"];
                             $semester = new Semester();
                             $getInfo =  $semester->getSemester($id);
-                            // var_dump($getInfoClass);
+                            // var_dump($getInfo);
                         ?>
                             <input hidden class="form-control" type="text" value="<?= $getInfo["semester_id"] ?>" id="semesterID">
                             <div class="card-body">
                                 <p class="text-uppercase text-sm">Cập nhật đơn vị học phí <?= $getInfo["semester_name"] ?> năm học <?= $getInfo["year"]; ?></p>
                                 <div id="message"></div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Học kỳ</label>
                                             <input class="form-control" type="text" value="<?= $getInfo["semester_name"] ?>" id="semesterName">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Năm học</label>
                                             <input class="form-control" type="text" value="<?= $getInfo["year"] ?>" id="year">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Học phí 1 tín</label>
                                             <input class="form-control" type="number" value="<?= $getInfo["cash"] ?>" id="cash">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Bắt đầu đăng ký</label>
+                                            <input class="form-control" type="date" id="start" value="<?= $getInfo["start_date"] ;?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Kết thúc đăng ký</label>
+                                            <input class="form-control" type="date" id="end" value="<?= $getInfo["end_date"] ;?>">
                                         </div>
                                     </div>
                                 </div>
@@ -106,12 +205,17 @@ if (!isset($_SESSION["account"])) {
                                 var semesterName = document.getElementById("semesterName");
                                 var year = document.getElementById("year");
                                 var cash = document.getElementById("cash");
+                                var start = document.getElementById("start");
+                                var end = document.getElementById("end");
+                                
                                 var updateBtn = document.getElementById("updateBtn");
                                 updateBtn.addEventListener("click", function(e) {
                                     const semesterID = document.getElementById("semesterID").value;
                                     const semesterNameValue = semesterName.value;
                                     const yearValue = year.value;
                                     const cashValue = cash.value;
+                                    const startValue = start.value;
+                                    const endValue = end.value;
 
                                     if (cashValue) {
                                         $.post(`/controller/semester.php?update`, {
@@ -119,6 +223,8 @@ if (!isset($_SESSION["account"])) {
                                             semesterName: semesterNameValue,
                                             year: yearValue,
                                             cash: cashValue,
+                                            start: startValue,
+                                            end: endValue
                                         }, function(res) {
                                             console.log(res);
                                             message.innerHTML = `<div class="alert alert-success" role="alert">Cập nhật thông tin thành công.</div>`
@@ -133,7 +239,6 @@ if (!isset($_SESSION["account"])) {
                             </script>
                         <?php } ?>
                         <div class="row">
-
                             <div class="col-md-4">
                                 <div class="form-group" style="margin-left:25px">
                                     <label for="example-text-input" class="form-control-label">Tìm kiếm học kỳ</label>
@@ -149,6 +254,8 @@ if (!isset($_SESSION["account"])) {
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Học kỳ</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số tiền 1 tín</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bắt đầu đăng ký</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Kết thúc đăng ký</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
@@ -174,6 +281,7 @@ if (!isset($_SESSION["account"])) {
 
         function get() {
             $.post(`/controller/tuition.php?manager`).done(function(res) {
+                console.log(res);
                 const data = JSON.parse(res.trim()).result;
 
                 data.forEach((item) => {
@@ -196,7 +304,12 @@ if (!isset($_SESSION["account"])) {
                         currency: 'VND',
                     })}
                 </td>
-
+<td>
+                    <p class="text-xs font-weight-bold mb-0">${item.start_date}</p>
+                </td>
+                <td>
+                    <p class="text-xs font-weight-bold mb-0">${item.end_date}</p>
+                </td>
                 <td class="align-middle">
                     <a href="/views/semester-manager.php?update=${item.semester_id}" data-toggle="tooltip" data-original-title="Edit user">
                         <span class="badge badge-sm bg-gradient-warning">

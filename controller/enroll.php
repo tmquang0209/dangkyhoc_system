@@ -1,5 +1,5 @@
 <?php
-// session_start();
+session_start();
 include_once("../models/enroll.php");
 include_once("../models/schedule.php");
 
